@@ -4,6 +4,25 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+##agregado reciente
+.mvn
+.project
+.classpath
+.idea
+mvnw
+mvnw.cmd
+!**/src/main/**
+!**/src/test/**
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin
+src/main/resources/application.properties
+##
 ### STS ###
 .apt_generated
 .classpath
