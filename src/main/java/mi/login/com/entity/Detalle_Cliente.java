@@ -7,9 +7,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +35,7 @@ import lombok.ToString;
 @Table(name = "detalle_cliente")
 public class Detalle_Cliente implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idDetalle_cliente")
     private Long idDetalle_Cliente;
     @Column(name = "edad")
@@ -41,10 +43,12 @@ public class Detalle_Cliente implements Serializable {
 
     @Column(name = "fecrea")
     // @Temporal(TemporalType.TIMESTAMP)
-    //@CreatedDate
+    // @CreatedDate
     private Date fecrea;
 
     @Column(name = "horcrea")
     private LocalTime horcrea;
 
+    @OneToOne(mappedBy = "detalleCliente", fetch = FetchType.LAZY)
+    private Usuario usuario;
 }

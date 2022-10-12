@@ -24,7 +24,7 @@ import mi.login.com.repository.UsuarioRepository;
 
 @RestController
 @RequestMapping(path = "rest/v1/usuarios")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8086" })
 public class UsuarioController {
 
     @Autowired
@@ -36,63 +36,59 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrarUsuario")
-    @ResponseBody
     public ResponseEntity<Map<String, Object>> registrarUsuario(@RequestBody Usuario usuario) throws Exception {
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> msg = new HashMap<>();
         Optional<Usuario> u = repository.findById(usuario.getIdUsuario());
         try {
-            if (u != null) {
-                response.put("Mensaje", "El Usuario Ya Existe");
+            if (u.isPresent()) {
+                msg.put("Mensaje", "El Usuario Ya Existe");
             } else {
                 Usuario obj = repository.save(usuario);
-                response.put("Mensaje", "Usuario registrado correctamente");
+                msg.put("Mensaje", "Usuario registrado correctamente");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("mensaje", "Error Crear Usuario " + e.getMessage());
+            msg.put("mensaje", "Error crear Usuario " + e.getMessage());
         }
-        return ResponseEntity.ok(response);
+        // }
+        return ResponseEntity.status(HttpStatus.CREATED).body(msg);
     }
 
     @PutMapping("/editarUsuario/{id}")
     public ResponseEntity<Map<String, Object>> editarUsuario(@RequestBody Usuario usuario) throws Exception {
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> msg = new HashMap<>();
         Optional<Usuario> u = repository.findById(usuario.getIdUsuario());
         try {
-            if (u != null) {
+            if (u.isPresent()) {
                 Usuario obj = repository.saveAndFlush(usuario);
-                response.put("Mensaje", "Usuario Actualizado correctamente");
+                msg.put("Mensaje", "Usuario Actualizado correctamente");
             } else {
-                response.put("Mensaje", "Usuario Error Actualizar");
-
+                msg.put("Mensaje", "Usuario no existe");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("mensaje", "Error editar Usuario " + e.getMessage());
+            msg.put("mensaje", "Error editar Usuario " + e.getMessage());
         }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(msg);
     }
 
-    @DeleteMapping("/eliminarUsuario/{id}")
+    @DeleteMapping("/eliminarUsuario/{idusuario}")
     public ResponseEntity<Map<String, Object>> eliminarUsuario(@PathVariable("idusuario") Long idusuario)
             throws Exception {
-        Map<String, Object> response = new HashMap<>();
-        List<Usuario> usuarioX = repository.findAll();
+        Map<String, Object> msg = new HashMap<>();
+        Optional<Usuario> u = repository.findById(idusuario);
+
         try {
-            if (idusuario != null) {
-                usuarioX.stream().filter(item -> (item.getIdUsuario() == idusuario)).findFirst();
+            if (u.isPresent()) {
                 repository.deleteById(idusuario);
-                response.put("Mensaje", "Usuario Eliminado correctamente");
+                msg.put("Mensaje", "Usuario Eliminado correctamente");
             } else {
-                response.put("Mensaje", "Usuario Error Eliminado");
-
+                msg.put("Mensaje", "Usuario no existe");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            response.put("mensaje", "Error editar Usuario " + e.getMessage());
+            msg.put("mensaje", "Error eliminar Usuario " + e.getMessage());
         }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(msg);
     }
 }
